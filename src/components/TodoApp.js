@@ -1,93 +1,84 @@
-import React, {Component} from 'react'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import TodoForm from './TodoForm'
 import TodoList from './TodoList'
 import Footer from './Footer'
-import {saveTodo, loadTodos, destroyTodo, updateTodo} from '../lib/service'
-import {filterTodos} from '../lib/utils'
+import { saveTodo, loadTodos, destroyTodo, updateTodo } from '../lib/service'
+import { filterTodos } from '../lib/utils'
 
+const TodoApp = () => {
 
-export default class TodoApp extends Component {
-  constructor(props) {
-    super(props)
+    const [currentTodo, setCurrentTodo] = useState('');
+    const [todos, setTodos] = useState([]);
+    const [error, setError] = useState(false);
 
-    this.state = {
-      currentTodo: '',
-      todos: []
-    }
-    this.handleNewTodoChange = this.handleNewTodoChange.bind(this)
-    this.handleTodoSubmit = this.handleTodoSubmit.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
-    this.handleToggle = this.handleToggle.bind(this)
+  useEffect(
+    () => {
+      loadTodos()
+        .then(({ data }) => setTodos(data))
+        .catch(() => setError(true));
+    }, []
+  )
+
+  const handleNewTodoChange = (evt) => {
+    setCurrentTodo(evt.target.value);
   }
 
-  componentDidMount () {
-    loadTodos()
-      .then(({data}) => this.setState({todos: data}))
-      .catch(() => this.setState({error: true}))
-  }
-
-  handleNewTodoChange (evt) {
-    this.setState({currentTodo: evt.target.value})
-  }
-
-  handleDelete (id) {
+  const handleDelete = (id) => {
     destroyTodo(id)
-      .then(() => this.setState({
-        todos: this.state.todos.filter(t => t.id !== id)
-      }))
+      .then(() => setTodos(todos.filter(t => t.id !== id)))
   }
 
-  handleToggle (id) {
-    const targetTodo = this.state.todos.find(t => t.id === id)
+  const handleToggle = (id) => {
+    const targetTodo = todos.find(t => t.id === id)
     const updated = {
       ...targetTodo,
       isComplete: !targetTodo.isComplete
     }
     updateTodo(updated)
-      .then(({data}) => {
-        const todos = this.state.todos.map(
+      .then(({ data }) => {
+        const handledTodos = todos.map(
           t => t.id === data.id ? data : t
         )
-        this.setState({todos: todos})
+        setTodos(handledTodos);
       })
   }
 
-  handleTodoSubmit (evt) {
+  const handleTodoSubmit = (evt) => {
     evt.preventDefault()
-    const newTodo = {name: this.state.currentTodo, isComplete: false}
+    const newTodo = { name: currentTodo, isComplete: false }
     saveTodo(newTodo)
-      .then(({data}) => this.setState({
-        todos: this.state.todos.concat(data),
-        currentTodo: ''
-      }))
-      .catch(() => this.setState({error: true}))
+      .then(({ data }) => {
+          setTodos(todos.concat(data));
+          setCurrentTodo('');
+      })
+      .catch(() => setError(true));
   }
 
-  render () {
-    const remaining = this.state.todos.filter(t => !t.isComplete).length
+    const remaining = todos.filter(t => !t.isComplete).length
     return (
       <Router>
         <div>
           <header className="header">
             <h1>todos</h1>
-            {this.state.error ? <span className='error'>Oh no!</span> : null}
+            {error ? <span className='error'>Oh no!</span> : null}
             <TodoForm
-              currentTodo={this.state.currentTodo}
-              handleTodoSubmit={this.handleTodoSubmit}
-              handleNewTodoChange={this.handleNewTodoChange}/>
+              currentTodo={currentTodo}
+              handleTodoSubmit={handleTodoSubmit}
+              handleNewTodoChange={handleNewTodoChange} />
           </header>
           <section className="main">
-          <Route path='/:filter?' render={({match}) =>
-            <TodoList
-              todos={filterTodos(match.params.filter, this.state.todos)}
-              handleDelete={this.handleDelete}
-              handleToggle={this.handleToggle} />
+            <Route path='/:filter?' render={({ match }) =>
+              <TodoList
+                todos={filterTodos(match.params.filter, todos)}
+                handleDelete={handleDelete}
+                handleToggle={handleToggle} />
             } />
           </section>
           <Footer remaining={remaining} />
         </div>
       </Router>
     )
-  }
 }
+
+export default TodoApp;
