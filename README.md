@@ -1,4 +1,4 @@
-##特性
+## 特性
 
 1. 时间旅行
 
@@ -16,11 +16,11 @@
 
 8. 跨浏览器
 
-##安装：
+## 安装：
 
-#####下载地址(`https://download.cypress.io`)
+##### 下载地址(`https://download.cypress.io`)
 
-#####跳过安装 `CYPRESS_INSTALL_BINARY=0 npm install`
+##### 跳过安装 `CYPRESS_INSTALL_BINARY=0 npm install`
 
 1. `npm i cypress`
 
@@ -30,7 +30,7 @@
 
 选择不发送异常 (Mac,Linux) `export CYPRESS_CRASH_REPORTS=0`
 
-##第一个测试
+## 第一个测试
 
 ```js
 describe('My first test', ()=>{
@@ -73,11 +73,11 @@ describe('Hooks', () => {
 - Any `afterEach()` hooks run
 - All `after()` hooks run (once)
 
-#####Seeding data : 
+##### Seeding data : 
 
 `cy.exec()`
 
-#####Stubbing the server : 
+##### Stubbing the server : 
 
 1. Generate the fixture stubs ahead of time
 2. Write a single e2e test without stubs, and then stub the rest
@@ -91,9 +91,9 @@ describe('Hooks', () => {
 
 ___
 
-##Core Concepts
+## Core Concepts
 
-###Introduction
+### Introduction
 
 ```js
 describe('Post Resource', function() {
@@ -120,7 +120,7 @@ describe('Post Resource', function() {
 
 
 
-###Querying Elements
+### Querying Elements
 
 1. [Cypress is Like jQuery](https://docs.cypress.io/guides/core-concepts/introduction-to-cypress.html#Cypress-is-Like-jQuery)
 
@@ -329,7 +329,7 @@ describe('Post Resource', function() {
 
 3. [Forcing](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html#Forcing)
 
-###Variables and Aliases
+### Variables and Aliases
 
 1. Return Values
    1. [Closures](https://docs.cypress.io/guides/core-concepts/variables-and-aliases.html#Closures)
